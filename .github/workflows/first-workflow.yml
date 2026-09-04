@@ -47,3 +47,14 @@ jobs:
 
       - name: Run tests
         run: python -m pytest test_app.py
+
+            - name: Check GitHub Secret
+        env:
+          MY_SECRET: ${{ secrets.MY_SECRET }}
+        run: |
+          if [ -n "$MY_SECRET" ]; then
+            echo "GitHub Secret is available"
+          else
+            echo "GitHub Secret is NOT available"
+            exit 1
+          fi 
