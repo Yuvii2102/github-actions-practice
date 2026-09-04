@@ -1,4 +1,4 @@
-name: Java Maven CI
+name: Java Maven CI with SonarQube
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    name: Build Java Application
+    name: Build and Analyze Java Application
     runs-on: ubuntu-latest
 
     steps:
@@ -24,3 +24,13 @@ jobs:
       - name: Build with Maven
         working-directory: java-app
         run: mvn clean install
+
+      - name: SonarQube Cloud Analysis
+        working-directory: java-app
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          mvn sonar:sonar \
+            -Dsonar.projectKey=Yuvi2102_github-actions-practice \
+            -Dsonar.organization=yuvi2102 \
+            -Dsonar.host.url=https://sonarcloud.io
