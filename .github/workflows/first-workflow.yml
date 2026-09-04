@@ -48,7 +48,7 @@ jobs:
       - name: Run tests
         run: python -m pytest test_app.py
 
-            - name: Check GitHub Secret
+      - name: Check GitHub Secret
         env:
           MY_SECRET: ${{ secrets.MY_SECRET }}
         run: |
@@ -57,4 +57,4 @@ jobs:
           else
             echo "GitHub Secret is NOT available"
             exit 1
-          fi 
+          fi
