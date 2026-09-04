@@ -21,6 +21,10 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
+      - name: Build with Maven
+        working-directory: java-app
+        run: mvn clean install
+
       - name: Verify Sonar token is available
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -47,6 +51,24 @@ jobs:
             echo "SonarQube authentication successful"
           else
             echo "SonarQube authentication failed"
+            exit 1
+          fi
+
+      - name: Test Sonar JRE endpoint
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          HTTP_CODE=$(curl -sS -o /tmp/sonar-response.txt -w "%{http_code}" \
+            -u "$SONAR_TOKEN:" \
+            "https://api.sonarcloud.io/analysis/jres?os=linux&arch=x86_64")
+
+          echo "Sonar JRE endpoint HTTP status: $HTTP_CODE"
+
+          if [ "$HTTP_CODE" = "200" ]; then
+            echo "Sonar JRE endpoint is accessible"
+          else
+            echo "Sonar JRE endpoint returned HTTP $HTTP_CODE"
+            cat /tmp/sonar-response.txt
             exit 1
           fi
 
