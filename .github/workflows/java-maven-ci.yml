@@ -21,16 +21,12 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Build with Maven
-        working-directory: java-app
-        run: mvn clean install
-
-      - name: SonarQube Cloud Analysis
+      - name: Build and analyze with SonarQube
         working-directory: java-app
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          mvn sonar:sonar \
-            -Dsonar.projectKey=Yuvi2102_github-actions-practice \
+          mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+            -Dsonar.region=us \
             -Dsonar.organization=yuvi2102 \
-            -Dsonar.host.url=https://sonarcloud.io
+            -Dsonar.projectKey=Yuvi2102_github-actions-practice
