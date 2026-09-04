@@ -33,6 +33,23 @@ jobs:
             exit 1
           fi
 
+      - name: Test SonarQube authentication
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          HTTP_CODE=$(curl -sS -o /dev/null -w "%{http_code}" \
+            -u "$SONAR_TOKEN:" \
+            https://sonarcloud.io/api/authentication/validate)
+
+          echo "SonarQube authentication HTTP status: $HTTP_CODE"
+
+          if [ "$HTTP_CODE" = "200" ]; then
+            echo "SonarQube authentication successful"
+          else
+            echo "SonarQube authentication failed"
+            exit 1
+          fi
+
       - name: Build and analyze with SonarQube
         working-directory: java-app
         env:
